@@ -1,8 +1,8 @@
 "use strict";
 
-//============================================================================================================================================//
+//=================================================================================================================//
 // Elements
-//============================================================================================================================================//
+//=================================================================================================================//
 
 const modal = document.querySelector(".modal");
 const overlay = document.querySelector(".overlay");
@@ -27,238 +27,56 @@ const btnLeft = document.querySelector(".slider__btn--left");
 const btnRight = document.querySelector(".slider__btn--right");
 const dotContainer = document.querySelector(".dots");
 
-//============================================================================================================================================//
+//=================================================================================================================//
 // Cookie
-//============================================================================================================================================//
+//=================================================================================================================//
 
 cookieCloseBtn.addEventListener("click", function () {
   cookieBody.classList.add("hidden");
-  cookieBody.style.bottom = "-120px";
+  cookieBody.style.bottom = "-12rem";
 });
 
-//============================================================================================================================================//
-// stick navber
-// nav's hight
-//============================================================================================================================================//
+//=================================================================================================================//
+// sthick navbar
+//=================================================================================================================//
 
-const navHight = nav.getBoundingClientRect().height;
+const navHeight = nav.getBoundingClientRect().height;
+// The getBoundingClientRect() method is a JavaScript method that is used to retrieve the position and size of an element relative to the viewport (the browser window). It returns an object with properties representing the element's position and dimensions. //
 
-function sticky(entries) {
-  const entrie = entries[0];
+function stick(entries) {
+  const entry = entries[0];
 
-  if (!entrie.isIntersecting) nav.classList.add("sticky");
+  if (!entry.isIntersecting) nav.classList.add("sticky");
   else nav.classList.remove("sticky");
 }
 
-const headerOberver = new IntersectionObserver(sticky, {
+const headerObserver = new IntersectionObserver(stick, {
   root: null,
   threshold: 0,
-  rootMargin: `-${navHight}px`,
+  rootMargin: `-${navHeight}px`,
 });
+// The Intersection Observer is a JavaScript API that provides a way to asynchronously observe changes in the intersection of an element with its parent container or the viewport. It allows you to efficiently track when an element enters or exits the viewport or when it intersects with another element. //
 
-headerOberver.observe(header);
+headerObserver.observe(header);
 
-//============================================================================================================================================//
-//revel section
-//============================================================================================================================================//
+//=================================================================================================================//
+// reveal section
+//=================================================================================================================//
 
-function revalSection(entries, observer) {
-  const entry = entries[0];
+const revealSection = (entries, obserder) => {
+  const [entry] = entries;
 
-  if (!entry.isIntersecting) return;
-  entry.target.classList.remove("section--hidden");
-  observer.unobserve(entry.target);
-}
+  if (entry.isIntersecting)
+    return entry.target.classList.remove("section--hidden");
+  obserder.unobserve(entry.target);
+};
 
-const sectionObs = new IntersectionObserver(revalSection, {
+const sectionObserver = new IntersectionObserver(revealSection, {
   root: null,
-  threshold: 0.3,
+  threshold: 0.2,
 });
 
 allSections.forEach((section) => {
-  sectionObs.observe(section);
+  sectionObserver.observe(section);
   section.classList.add("section--hidden");
-});
-
-//============================================================================================================================================//
-//Modal Window
-//============================================================================================================================================//
-
-function openModal(e) {
-  e.preventDefault();
-  modal.classList.remove("hidden");
-  overlay.classList.remove("hidden");
-}
-function closeModal() {
-  modal.classList.add("hidden");
-  overlay.classList.add("hidden");
-}
-
-btnsOpenModal.forEach((btn) => btn.addEventListener("click", openModal));
-btnCloseModal.addEventListener("click", closeModal);
-overlay.addEventListener("click", closeModal);
-
-document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape" && !modal.classList.contains("hidden")) {
-    closeModal();
-  }
-});
-
-//============================================================================================================================================//
-// scroll behaviors
-//============================================================================================================================================//
-
-navLinks.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  if (e.target.classList.contains("nav__link")) {
-    const att = e.target.getAttribute("href");
-    console.log(att);
-    document.querySelector(att).scrollIntoView({ behavior: "smooth" });
-  }
-});
-
-//============================================================================================================================================//
-// toggle navbar
-//============================================================================================================================================//
-
-toggleBtn.addEventListener("click", function () {
-  if (navLinks.classList.contains("nav__open")) {
-    navLinks.classList.remove("nav__open");
-    document.querySelector("html").style.overflow = "visible";
-  } else {
-    navLinks.classList.add("nav__open");
-    document.querySelector("html").style.overflow = "hidden";
-  }
-});
-
-navLinks.addEventListener("click", function () {
-  navLinks.classList.contains("nav__open") &&
-    navLinks.classList.remove("nav__open");
-  document.querySelector("html").style.overflow = "visible";
-});
-
-//============================================================================================================================================//
-// learn more scroll
-//============================================================================================================================================//
-
-btnScrollTo.addEventListener("click", function () {
-  section1.scrollIntoView({ behavior: "smooth" });
-});
-
-//============================================================================================================================================//
-// lazy loading
-//============================================================================================================================================//
-
-const loadImg = function (entries, observer) {
-  const entry = entries[0];
-  if (!entry.isIntersecting) return;
-  entry.target.src = entry.target.dataset.src;
-
-  entry.target.addEventListener("load", function () {
-    entry.target.classList.remove("lazy-img");
-  });
-};
-
-const imgObserver = new IntersectionObserver(loadImg, {
-  root: null,
-  threshold: 0,
-  rootMargin: "252px",
-});
-
-imgTargets.forEach((img) => imgObserver.observe(img));
-
-//============================================================================================================================================//
-// silder
-//============================================================================================================================================//
-
-let currentSlide = 0;
-const maxSlide = slides.length - 1;
-
-// dots
-
-function creatingDots() {
-  slides.forEach((_, i) => {
-    const dot = `<button class="dots__dot" data-slide="${i}"></button>`;
-    dotContainer.insertAdjacentHTML("beforeend", dot);
-  });
-}
-
-creatingDots();
-
-// activate dots
-
-function activateDots(slide) {
-  document
-    .querySelectorAll(".dots__dot")
-    .forEach((dot) => dot.classList.remove("dots__dot--active"));
-
-  document
-    .querySelector(`.dots__dot[data-slide="${slide}"]`)
-    .classList.add("dots__dot--active");
-}
-
-activateDots(0);
-
-function updateSlide(cs) {
-  slides.forEach(
-    (sl, i) => (sl.style.transform = `translateX(${100 * (i - cs)}%)`)
-  );
-}
-
-updateSlide(0);
-
-function previousSlide() {
-  if (currentSlide === 0) currentSlide = maxSlide;
-  else currentSlide--;
-  updateSlide(currentSlide);
-  activateDots(currentSlide);
-}
-
-function nextSlide() {
-  if (currentSlide === maxSlide) currentSlide = 0;
-  else currentSlide++;
-  updateSlide(currentSlide);
-  activateDots(currentSlide);
-}
-
-// dots handler
-
-dotContainer.addEventListener("click", function (e) {
-  if (e.target.classList.contains("dots__dot")) {
-    activateDots(e.target.dataset.slide);
-    updateSlide(e.target.dataset.slide);
-  }
-});
-
-// button handles
-
-btnLeft.addEventListener("click", previousSlide);
-btnRight.addEventListener("click", nextSlide);
-
-// keyboard
-
-document.addEventListener("keydown", (e) => {
-  e.key === "ArrowLeft" && previousSlide();
-  e.key === "ArrowRight" && nextSlide();
-});
-
-//============================================================================================================================================//
-// tabbed component
-//============================================================================================================================================//
-
-tabsContainer.addEventListener("click", function (e) {
-  const btn = e.target.closest(".operations__tab");
-
-  if (!btn) return;
-
-  tabs.forEach((tab) => tab.classList.remove("operations__tab--active"));
-  tabsContent.forEach((content) =>
-    content.classList.remove("operations__content--active")
-  );
-
-  btn.classList.add("operations__tab--active");
-  document
-    .querySelector(`.operations__content--${btn.dataset.tab}`)
-    .classList.add("operations__content--active");
 });
