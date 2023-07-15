@@ -80,3 +80,68 @@ allSections.forEach((section) => {
   sectionObserver.observe(section);
   section.classList.add("section--hidden");
 });
+
+//=================================================================================================================//
+// moday window
+//=================================================================================================================//
+
+function openModal(event) {
+  event.preventDefault();
+
+  modal.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+}
+
+function closeModal() {
+  modal.classList.add("hidden");
+  overlay.classList.add("hidden");
+}
+
+btnsOpenModal.forEach((btn) => btn.addEventListener("click", openModal));
+btnCloseModal.addEventListener("click", closeModal);
+overlay.addEventListener("click", closeModal);
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
+});
+
+//=================================================================================================================//
+// scroll behavior
+//=================================================================================================================//
+
+navLinks.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  if (event.target.classList.contains("nav__link")) {
+    const attr = event.target.getAttribute("href");
+    document.querySelector(attr).scrollIntoView({ behavior: "smooth" });
+  }
+});
+
+//=================================================================================================================//
+// toggle navbar
+//=================================================================================================================//
+
+toggleBtn.addEventListener("click", function (event) {
+  if (navLinks.classList.contains("nav__open")) {
+    navLinks.classList.remove("nav__open");
+    document.querySelector("html").style.overflow = "visible";
+  } else {
+    navLinks.classList.add("nav__open");
+    document.querySelector("html").style.overflow = "hidden";
+  }
+});
+
+navLinks.addEventListener("click", function () {
+  navLinks.classList.contains("nav__open") &&
+    navLinks.classList.remove("nav__open");
+  document.querySelector("html").style.overflow = "visible";
+});
+
+//=================================================================================================================//
+// learn more scroll
+//=================================================================================================================//
+
+btnScrollTo.addEventListener("click", function () {
+  section1.scrollIntoView({ behavior: "smooth" });
+});
