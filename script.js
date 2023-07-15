@@ -63,12 +63,12 @@ headerObserver.observe(header);
 // reveal section
 //=================================================================================================================//
 
-const revealSection = (entries, obserder) => {
+const revealSection = (entries, observer) => {
   const [entry] = entries;
 
   if (entry.isIntersecting)
     return entry.target.classList.remove("section--hidden");
-  obserder.unobserve(entry.target);
+  // observer.unobserve(entry.target);
 };
 
 const sectionObserver = new IntersectionObserver(revealSection, {
