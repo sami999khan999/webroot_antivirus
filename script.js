@@ -145,3 +145,26 @@ navLinks.addEventListener("click", function () {
 btnScrollTo.addEventListener("click", function () {
   section1.scrollIntoView({ behavior: "smooth" });
 });
+
+//=================================================================================================================//
+// lazy loading
+//=================================================================================================================//
+
+const loadImg = function (entries, observer) {
+  const entry = entries[0];
+
+  if (entry.isIntersecting);
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.addEventListener("load", function () {
+    entry.target.classList.remove("lazy-img");
+    // console.log(1);
+  });
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0.2,
+});
+
+imgTargets.forEach((img) => imgObserver.observe(img));
