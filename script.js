@@ -82,7 +82,7 @@ allSections.forEach((section) => {
 });
 
 //=================================================================================================================//
-// moday window
+// modal window
 //=================================================================================================================//
 
 function openModal(event) {
@@ -153,8 +153,7 @@ btnScrollTo.addEventListener("click", function () {
 const loadImg = function (entries, observer) {
   const entry = entries[0];
 
-  if (entry.isIntersecting);
-  entry.target.src = entry.target.dataset.src;
+  if (entry.isIntersecting) entry.target.src = entry.target.dataset.src;
 
   entry.target.addEventListener("load", function () {
     entry.target.classList.remove("lazy-img");
@@ -168,3 +167,90 @@ const imgObserver = new IntersectionObserver(loadImg, {
 });
 
 imgTargets.forEach((img) => imgObserver.observe(img));
+
+//=================================================================================================================//
+// slider
+//=================================================================================================================//
+
+let currentSlide = 0;
+const maxSlide = slides.length - 1;
+
+const changeSlide = function (cs) {
+  slides.forEach((sl, i) => {
+    sl.style.transform = `translateX(${100 * (i - cs)}%)`;
+  });
+};
+
+changeSlide(0);
+
+function previousSlide() {
+  if (currentSlide === 0) currentSlide = maxSlide;
+  else currentSlide--;
+  changeSlide(currentSlide);
+  activateDots(currentSlide);
+}
+
+function nextSlide() {
+  if (currentSlide === maxSlide) currentSlide = 0;
+  else currentSlide++;
+  changeSlide(currentSlide);
+  activateDots(currentSlide);
+}
+
+btnLeft.addEventListener("click", previousSlide);
+btnRight.addEventListener("click", nextSlide);
+
+// dots
+function creatingDots() {}
+slides.forEach((_, i) => {
+  const dot = `<button class="dots__dot" data-slide="${i}"><button>`;
+  dotContainer.insertAdjacentHTML("beforeend", dot);
+});
+creatingDots();
+
+// activate dots
+function activateDots(slide) {
+  document
+    .querySelectorAll(".dots__dot")
+    .forEach((dot) => dot.classList.remove("dots__dot--active"));
+
+  document
+    .querySelector(`.dots__dot[data-slide="${slide}"]`)
+    .classList.add("dots__dot--active");
+}
+activateDots(0);
+
+// dots handler
+dotContainer.addEventListener("click", function (event) {
+  if (event.target.classList.contains("dots__dot")) {
+    activateDots(event.target.dataset.slide);
+    changeSlide(event.target.dataset.slide);
+  }
+});
+
+// arrow key
+document.addEventListener("keydown", function (event) {
+  event.key === "ArrowLeft" && previousSlide();
+  event.key === "ArrowRight" && nextSlide();
+});
+
+//=================================================================================================================//
+// tab componant
+//=================================================================================================================//
+
+tabsContainer.addEventListener("click", function (event) {
+  const btn = event.target.closest(".operations__tab");
+  console.log(btn);
+
+  if (!btn) return;
+
+  tabs.forEach((tab) => tab.classList.remove("operations__tab--active"));
+  tabsContent.forEach((content) =>
+    content.classList.remove("operations__content--active")
+  );
+
+  btn.classList.add("operations__tab--active");
+  document
+    .querySelector(`.operations__content--${btn.dataset.tab}`)
+    .classList.add("operations__content--active");
+});
